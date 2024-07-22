@@ -1,12 +1,12 @@
 # Maintainer: Barnabé di Kartola <barnabedikartola@gmail.com>
 
-pkgname=biglinux-package-template
-pkgdesc="Package template for biglinux"
-# depends=('')
+pkgname=obs-studio-portable
+pkgdesc="OBS Studio for Linux, pre-loaded with extra features and plugins for live streaming and screen recording, Includes 50 of the best 3rd Party plugins for OBS Studio!"
+depends=('distrobox')
 # makedepends=('')
 # conflicts=('')
 pkgver=$(date +%y.%m.%d)
-pkgrel=$(date +%H%M)
+pkgrel=23365
 arch=('any')
 license=('GPL3')
 url="https://github.com/biglinux/$pkgname"
