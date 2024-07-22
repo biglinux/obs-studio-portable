@@ -9,6 +9,13 @@ post_install() {
     for user in $(awk -F':' '{ if ($3 >= 1000 && $1 != "nobody") print $1 }' /etc/passwd); do
       runAsUser="sudo -u $user XDG_RUNTIME_DIR=/run/user/$(id -u $user)"
       localApp="/home/$user/.local/share/applications"
+
+      # Verificar se já existe container e .desktop do obs-studio-portable e remove-los antes.
+      if [ -n "$(distrobox-list | grep obs-studio-portable)" ];then
+        distrobox-rm -a -f obs-studio-portable
+        $runAsUser test -e $localApp/com.obsproject.Studio.desktop && rm "$localApp/com.obsproject.Studio.desktop"
+      fi
+
       $runAsUser distrobox create --image docker.io/xivastudio/distrobox-obs-studio-portable:latest --name obs-studio-portable --pull
       $runAsUser distrobox enter --name obs-studio-portable -- distrobox-export -el Portable --app /opt/obs-portable/obs-portable
       $runAsUser test -e $localApp/obs-studio-portable.desktop && rm "$localApp/obs-studio-portable.desktop"

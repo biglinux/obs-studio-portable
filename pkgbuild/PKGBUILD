@@ -5,7 +5,7 @@ pkgdesc="OBS Studio for Linux, pre-loaded with extra features and plugins for li
 depends=('distrobox' 'biglinux-docker-config' 'biglinux-improve-compatibility>=24.07.22')
 # makedepends=('')
 # conflicts=('')
-pkgver=$(date +%y.%m.%d)
+pkgver=$(date +%y.%m.%d-%H%M)
 pkgrel=23365
 arch=('any')
 license=('GPL3')
