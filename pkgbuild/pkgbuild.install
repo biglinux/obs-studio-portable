@@ -32,7 +32,10 @@ post_install() {
 #}
 
 ## arg 1:  the old package version
-#post_remove() {
-	# do something here
-#}
- 
+post_remove() {
+  for user in $(awk -F':' '{ if ($3 >= 1000 && $1 != "nobody") print $1 }' /etc/passwd); do
+    runAsUser="sudo -u $user XDG_RUNTIME_DIR=/run/user/$(id -u $user)"
+    localApp="/home/$user/.local/share/applications"
+    $runAsUser test -e $localApp/com.obsproject.Studio.desktop && rm "$localApp/com.obsproject.Studio.desktop"
+  done
+}
