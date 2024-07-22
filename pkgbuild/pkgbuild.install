@@ -18,6 +18,7 @@ post_install() {
 
       $runAsUser distrobox create --image docker.io/xivastudio/distrobox-obs-studio-portable:latest --name obs-studio-portable --pull
       $runAsUser distrobox enter --name obs-studio-portable -- distrobox-export -el Portable --app /opt/obs-portable/obs-portable
+      $runAsUser distrobox enter --name obs-studio-portable -- distrobox-export --bin /opt/obs-portable/obs-portable
       $runAsUser test -e $localApp/obs-studio-portable.desktop && rm "$localApp/obs-studio-portable.desktop"
       $runAsUser test -e $localApp/obs-studio-portable-com.obsproject.Studio.desktop && mv "$localApp/obs-studio-portable-com.obsproject.Studio.desktop" "$localApp/com.obsproject.Studio.desktop"
     done
