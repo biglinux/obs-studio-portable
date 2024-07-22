@@ -2,7 +2,7 @@
 
 pkgname=obs-studio-portable
 pkgdesc="OBS Studio for Linux, pre-loaded with extra features and plugins for live streaming and screen recording, Includes 50 of the best 3rd Party plugins for OBS Studio!"
-depends=('distrobox')
+depends=('distrobox' 'biglinux-docker-config')
 # makedepends=('')
 # conflicts=('')
 pkgver=$(date +%y.%m.%d)

@@ -37,5 +37,7 @@ post_remove() {
     runAsUser="sudo -u $user XDG_RUNTIME_DIR=/run/user/$(id -u $user)"
     localApp="/home/$user/.local/share/applications"
     $runAsUser test -e $localApp/com.obsproject.Studio.desktop && rm "$localApp/com.obsproject.Studio.desktop"
+    imageID=$(docker images | grep xivastudio/distrobox-obs-studio-portable | awk '{print $3}')
+    docker image rm $imageID
   done
 }
