@@ -5,6 +5,7 @@
 
 ## arg 1:  the new package version
 post_install() {
+    /usr/share/libalpm/scripts/biglinux-improve-compatibility-distrobox
     echo -e '\e[33;1mBe patient, this step may take some time...\e[m'
     for user in $(awk -F':' '{ if ($3 >= 1000 && $1 != "nobody") print $1 }' /etc/passwd); do
       runAsUser="sudo -u $user XDG_RUNTIME_DIR=/run/user/$(id -u $user)"
