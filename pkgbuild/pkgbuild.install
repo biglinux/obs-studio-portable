@@ -5,7 +5,7 @@
 
 ## arg 1:  the new package version
 post_install() {
-    /usr/share/libalpm/scripts/biglinux-improve-compatibility-distrobox
+
     echo -e '\e[33;1mBe patient, this step may take some time...\e[m'
     for user in $(awk -F':' '{ if ($3 >= 1000 && $1 != "nobody") print $1 }' /etc/passwd); do
       runAsUser="sudo -u $user XDG_RUNTIME_DIR=/run/user/$(id -u $user)"
@@ -19,9 +19,16 @@ post_install() {
 
       $runAsUser distrobox create --image docker.io/xivastudio/distrobox-obs-studio-portable:latest --name obs-studio-portable --pull
       $runAsUser distrobox enter --name obs-studio-portable -- distrobox-export -el Portable --app /opt/obs-portable/obs-portable
+
       $runAsUser distrobox enter --name obs-studio-portable -- distrobox-export --bin /opt/obs-portable/obs-portable
+
+      $runAsUser distrobox enter --name obs-studio-portable -- distrobox-export --bin /opt/obs-portable/bin/obs-gamecapture
+      $runAsUser distrobox enter --name obs-studio-portable -- distrobox-export --bin /opt/obs-portable/bin/obs-glcapture
+      $runAsUser distrobox enter --name obs-studio-portable -- distrobox-export --bin /opt/obs-portable/bin/obs-vkcapture
+
+
       $runAsUser test -e $localApp/obs-studio-portable.desktop && rm "$localApp/obs-studio-portable.desktop"
-      # $runAsUser test -e $localApp/obs-studio-portable-com.obsproject.Studio.desktop && mv "$localApp/obs-studio-portable-com.obsproject.Studio.desktop" "$localApp/com.obsproject.Studio.desktop"
+      $runAsUser test -e $localApp/obs-studio-portable-com.obsproject.Studio.desktop && mv "$localApp/obs-studio-portable-com.obsproject.Studio.desktop" "$localApp/com.obsproject.Studio.desktop"
     done
 }
 
