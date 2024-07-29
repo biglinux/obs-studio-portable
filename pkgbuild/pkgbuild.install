@@ -5,31 +5,28 @@
 
 ## arg 1:  the new package version
 post_install() {
-    /usr/share/libalpm/scripts/biglinux-improve-compatibility-distrobox
-    echo -e '\e[33;1mBe patient, this step may take some time...\e[m'
-    for user in $(awk -F':' '{ if ($3 >= 1000 && $1 != "nobody") print $1 }' /etc/passwd); do
-      runAsUser="sudo -u $user XDG_RUNTIME_DIR=/run/user/$(id -u $user)"
-      localApp="/home/$user/.local/share/applications"
+  /usr/share/libalpm/scripts/biglinux-improve-compatibility-distrobox
+  echo -e '\e[33;1mBe patient, this step may take some time...\e[m'
+  for user in $(awk -F':' '{ if ($3 >= 1000 && $1 != "nobody") print $1 }' /etc/passwd); do
+    runAsUser="sudo -u $user XDG_RUNTIME_DIR=/run/user/$(id -u $user)"
+    localApp="/home/$user/.local/share/applications"
 
-      # Verificar se já existe container e .desktop do obs-studio-portable e remove-los antes.
-      if [ -n "$(distrobox-list | grep obs-studio-portable)" ];then
-        distrobox-rm -a -f obs-studio-portable
-        $runAsUser test -e $localApp/com.obsproject.Studio.desktop && rm "$localApp/com.obsproject.Studio.desktop"
-      fi
+    # Verificar se já existe container e .desktop do obs-studio-portable e remove-los antes.
+    if [ -n "$(distrobox-list | grep obs-studio-portable)" ];then
+      distrobox-rm -a -f obs-studio-portable
+      $runAsUser test -e $localApp/com.obsproject.Studio.desktop && rm "$localApp/com.obsproject.Studio.desktop"
+    fi
 
-      $runAsUser distrobox create --image docker.io/xivastudio/distrobox-obs-studio-portable:latest --name obs-studio-portable --pull
-      $runAsUser distrobox enter --name obs-studio-portable -- distrobox-export -el Portable --app /opt/obs-portable/obs-portable
+    $runAsUser distrobox create --image docker.io/xivastudio/distrobox-obs-studio-portable:latest --name obs-studio-portable --pull
+    $runAsUser distrobox enter --name obs-studio-portable -- distrobox-export -el Portable --app /opt/obs-portable/obs-portable
+    $runAsUser distrobox enter --name obs-studio-portable -- distrobox-export --bin /opt/obs-portable/obs-portable
+    $runAsUser distrobox enter --name obs-studio-portable -- distrobox-export --bin /opt/obs-portable/bin/obs-gamecapture
+    $runAsUser distrobox enter --name obs-studio-portable -- distrobox-export --bin /opt/obs-portable/bin/obs-glcapture
+    $runAsUser distrobox enter --name obs-studio-portable -- distrobox-export --bin /opt/obs-portable/bin/obs-vkcapture
 
-      $runAsUser distrobox enter --name obs-studio-portable -- distrobox-export --bin /opt/obs-portable/obs-portable
-
-      $runAsUser distrobox enter --name obs-studio-portable -- distrobox-export --bin /opt/obs-portable/bin/obs-gamecapture
-      $runAsUser distrobox enter --name obs-studio-portable -- distrobox-export --bin /opt/obs-portable/bin/obs-glcapture
-      $runAsUser distrobox enter --name obs-studio-portable -- distrobox-export --bin /opt/obs-portable/bin/obs-vkcapture
-
-
-      $runAsUser test -e $localApp/obs-studio-portable.desktop && rm "$localApp/obs-studio-portable.desktop"
-      # $runAsUser test -e $localApp/obs-studio-portable-com.obsproject.Studio.desktop && mv "$localApp/obs-studio-portable-com.obsproject.Studio.desktop" "$localApp/com.obsproject.Studio.desktop"
-    done
+    $runAsUser test -e $localApp/obs-studio-portable.desktop && rm "$localApp/obs-studio-portable.desktop"
+    # $runAsUser test -e $localApp/obs-studio-portable-com.obsproject.Studio.desktop && mv "$localApp/obs-studio-portable-com.obsproject.Studio.desktop" "$localApp/com.obsproject.Studio.desktop"
+  done
 }
 
 ## arg 2:  the old package version
@@ -38,9 +35,9 @@ post_install() {
 #}
 
 ## arg 2:  the old package version
-#post_upgrade() {
-	#post_install
-#}
+post_upgrade() {
+	post_install
+}
 
 ## arg 1:  the old package version
 #pre_remove() {
@@ -53,13 +50,19 @@ post_remove() {
     runAsUser="sudo -u $user XDG_RUNTIME_DIR=/run/user/$(id -u $user)"
     localApp="/home/$user/.local/share/applications"
     $runAsUser test -e $localApp/com.obsproject.Studio.desktop && rm "$localApp/com.obsproject.Studio.desktop"
-    containerID=$(docker ps | grep xivastudio/distrobox-obs-studio-portable | awk '{print $1}')
-    if [ -n "$containerID" ];then
-      docker rm -f $containerID
+
+    if [ -n "$(distrobox-list | grep obs-studio-portable)" ];then
+      distrobox-rm -a -f obs-studio-portable
+      $runAsUser test -e $localApp/com.obsproject.Studio.desktop && rm "$localApp/com.obsproject.Studio.desktop"
     fi
-    imageID=$(docker images | grep xivastudio/distrobox-obs-studio-portable | awk '{print $3}')
-    if [ -n "$imageID" ];then
-      docker image rm -f $imageID
-    fi
+
+    # containerID=$(docker ps | grep xivastudio/distrobox-obs-studio-portable | awk '{print $1}')
+    # if [ -n "$containerID" ];then
+    #   docker rm -f $containerID
+    # fi
+    # imageID=$(docker images | grep xivastudio/distrobox-obs-studio-portable | awk '{print $3}')
+    # if [ -n "$imageID" ];then
+    #   docker image rm -f $imageID
+    # fi
   done
 }
