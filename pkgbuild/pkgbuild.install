@@ -13,7 +13,7 @@ post_install() {
 
     # Verificar se já existe container e .desktop do obs-studio-portable e remove-los antes.
     if [ -n "$(distrobox-list | grep obs-studio-portable)" ];then
-      distrobox-rm -a -f obs-studio-portable
+      distrobox-rm -f obs-studio-portable
       $runAsUser test -e $localApp/com.obsproject.Studio.desktop && rm "$localApp/com.obsproject.Studio.desktop"
     fi
 
@@ -52,17 +52,17 @@ post_remove() {
     $runAsUser test -e $localApp/com.obsproject.Studio.desktop && rm "$localApp/com.obsproject.Studio.desktop"
 
     if [ -n "$(distrobox-list | grep obs-studio-portable)" ];then
-      distrobox-rm -a -f obs-studio-portable
+      distrobox-rm -f obs-studio-portable
       $runAsUser test -e $localApp/com.obsproject.Studio.desktop && rm "$localApp/com.obsproject.Studio.desktop"
     fi
 
-    # containerID=$(docker ps | grep xivastudio/distrobox-obs-studio-portable | awk '{print $1}')
-    # if [ -n "$containerID" ];then
-    #   docker rm -f $containerID
-    # fi
-    # imageID=$(docker images | grep xivastudio/distrobox-obs-studio-portable | awk '{print $3}')
-    # if [ -n "$imageID" ];then
-    #   docker image rm -f $imageID
-    # fi
+    containerID=$(docker ps | grep xivastudio/distrobox-obs-studio-portable | awk '{print $1}')
+    if [ -n "$containerID" ];then
+      docker rm -f $containerID
+    fi
+    imageID=$(docker images | grep xivastudio/distrobox-obs-studio-portable | awk '{print $3}')
+    if [ -n "$imageID" ];then
+      docker image rm -f $imageID
+    fi
   done
 }
